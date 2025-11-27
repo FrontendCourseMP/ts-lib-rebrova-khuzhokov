@@ -19,6 +19,8 @@ export class FormValidator implements IFormValidator {
     this.#form = form;
     this.#stringFields = [];
     this.#numberFields = [];
+    this.#fieldNames = new Set();
+    this.#inferDefaultFieldRules();
   }
 
   addField<T extends TFieldTypes>(
@@ -47,17 +49,29 @@ export class FormValidator implements IFormValidator {
         });
         break;
     }
+    this.#fieldNames.add(fieldName);
   }
 
   validate(): boolean {
     throw new Error("Method not implemented.");
   }
 
-  #inferDefaultFieldRules(fieldName: string) {}
+  #inferDefaultFieldRules() {
+    Array.from(this.#form.children).forEach((child) => {
+      if (!this.#fieldNames.has(child.id)) {
+        return;
+      }
+      console.log(child);
+    });
+  }
 
   #form: HTMLFormElement;
 
   #stringFields: Field<TStringFieldTypes>[];
 
   #numberFields: Field<TNumberFieldTypes>[];
+
+  #stringFieldsDefault: Field<TStringFieldTypes>[];
+  #numberFieldsDefault: Field<TNumberFieldTypes>[];
+  #fieldNames: Set<string>;
 }
