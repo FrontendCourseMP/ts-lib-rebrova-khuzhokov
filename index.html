@@ -8,9 +8,38 @@
   <body>
     <main>
       <section>
-        <form novalidate>
-          <label>Имя <input type="text" required></label>
-          <p role="alert" aria-live="assertive"></p>
+        <form id="form">
+          <div id="username">
+            <label for="input-username">Name</label>
+            <input
+              id="input-username"
+              name="username"
+              type="text"
+              minlength="3"
+              maxlength="255"
+              pattern="^[a-zA-Z]+$"
+            />
+            <span id="error-username"></span>
+          </div>
+
+          <div id="age">
+            <label for="input-age">Age</label>
+            <input id="input-age" name="age" type="number" max="65" min="18" />
+            <span id="error-age"></span>
+          </div>
+
+          <div id="email">
+            <label for="input-email">Email</label>
+            <input id="input-email" name="email" type="email" />
+            <span id="error-email"></span>
+          </div>
+
+          <div id="password">
+            <label for="input-password">Password</label>
+            <input id="input-password" name="password" type="password" />
+            <span id="error-password"></span>
+          </div>
+
           <button type="submit">Отправить</button>
         </form>
       </section>
