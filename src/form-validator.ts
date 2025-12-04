@@ -1,17 +1,11 @@
-import type { IFormValidator, Rule, TFieldTypes } from "./types/types";
-
-type TFieldConfig<T extends TFieldTypes = TFieldTypes> = {
-  fieldName: string;
-  type: T;
-  rules: Rule<T>;
-  htmlRules: Rule<T>;
-  finalRules: Rule<T>;
-};
-
-type ValidationError = {
-  fieldName: string;
-  message: string;
-};
+import type {
+  AddFieldParams,
+  IFormValidator,
+  TFieldConfig,
+  TFieldTypes,
+  ValidationError,
+  Rule,
+} from "./types/types";
 
 /**
  * Класс для валидации HTML форм с поддержкой различных типов полей и правил валидации.
@@ -63,11 +57,7 @@ export class FormValidator implements IFormValidator {
    *   .addField('email', 'email', { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ });
    * ```
    */
-  addField<T extends TFieldTypes>(
-    fieldName: string,
-    type: T,
-    rules?: Rule<T>
-  ): this {
+  addField({ fieldName, type, rules }: AddFieldParams): this {
     const htmlRules = this.#extractHtmlRules(fieldName, type);
     const finalRules = this.#mergeRules(htmlRules, rules);
 
@@ -77,7 +67,7 @@ export class FormValidator implements IFormValidator {
       rules: rules || {},
       htmlRules,
       finalRules,
-    } as TFieldConfig);
+    });
 
     return this;
   }
@@ -113,13 +103,10 @@ export class FormValidator implements IFormValidator {
     return isValid;
   }
 
-  #extractHtmlRules<T extends TFieldTypes>(
-    fieldName: string,
-    type: T
-  ): Rule<T> {
+  #extractHtmlRules<T extends TFieldTypes>(fieldName: string, type: T): Rule {
     const input = this.#form.querySelector(
       `#input-${fieldName}`
-    ) as HTMLInputElement;
+    ) as HTMLInputElement | null;
 
     if (!input) {
       throw new Error(`Input not found: input-${fieldName}`);
@@ -152,13 +139,10 @@ export class FormValidator implements IFormValidator {
       }
     }
 
-    return rules as Rule<T>;
+    return rules as Rule;
   }
 
-  #mergeRules<T extends TFieldTypes>(
-    htmlRules: Rule<T>,
-    jsRules?: Rule<T>
-  ): Rule<T> {
+  #mergeRules(htmlRules: Rule, jsRules?: Rule): Rule {
     return {
       ...htmlRules,
       ...jsRules,
@@ -168,7 +152,7 @@ export class FormValidator implements IFormValidator {
   #validateField(config: TFieldConfig): ValidationError | null {
     const input = this.#form.querySelector(
       `#input-${config.fieldName}`
-    ) as HTMLInputElement;
+    ) as HTMLInputElement | null;
 
     if (!input) {
       return null;
@@ -275,7 +259,7 @@ export class FormValidator implements IFormValidator {
     });
   }
 
-  #getDefaultErrorMessage(rule: string, rules: Rule<TFieldTypes>): string {
+  #getDefaultErrorMessage(rule: string, rules: Rule): string {
     const rulesAny = rules as Record<string, unknown>;
     const messages: Record<string, string> = {
       required: "Это поле обязательно",

@@ -7,13 +7,29 @@ if (!form) {
 }
 
 const validator = new FormValidator(form)
-  .addField("username", "text", { required: true, minLength: 3 })
-  .addField("email", "email", {
-    required: true,
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  .addField({
+    fieldName: "username",
+    type: "text",
+    rules: { required: true, minLength: 3 },
   })
-  .addField("password", "password", { required: true, minLength: 8 })
-  .addField("age", "number", { required: true, min: 18, max: 100 });
+  .addField({
+    fieldName: "email",
+    type: "email",
+    rules: {
+      required: true,
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
+  })
+  .addField({
+    fieldName: "password",
+    type: "password",
+    rules: { required: true, minLength: 8 },
+  })
+  .addField({
+    fieldName: "age",
+    type: "number",
+    rules: { required: true, min: 18, max: 100 },
+  });
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();

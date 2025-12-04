@@ -20,15 +20,45 @@ export type CommonRule = {
   getMessage?: () => string;
 };
 
-export type Rule<T extends TFieldTypes> = Partial<
-  (T extends TNumberFieldTypes ? TNumberRule : TStringRule) & CommonRule
->;
+type FinalNumberRules = Partial<TNumberRule & CommonRule>;
+
+type FinalStringRules = Partial<TStringRule & CommonRule>;
+
+export type Rule = FinalNumberRules | FinalStringRules;
+
+export type AddFieldParams =
+  | {
+      fieldName: string;
+      type: TStringFieldTypes;
+      rules?: FinalStringRules;
+    }
+  | {
+      fieldName: string;
+      type: TNumberFieldTypes;
+      rules?: FinalNumberRules;
+    };
 
 export interface IFormValidator {
-  addField<T extends TFieldTypes>(
-    fieldName: string,
-    type: T,
-    rules?: Rule<T>
-  ): this;
+  addField(params: AddFieldParams): this;
   validate(): boolean;
 }
+export type TFieldConfig =
+  | {
+      fieldName: string;
+      type: TStringFieldTypes;
+      rules: FinalStringRules;
+      htmlRules: FinalStringRules;
+      finalRules: FinalStringRules;
+    }
+  | {
+      fieldName: string;
+      type: TNumberFieldTypes;
+      rules: FinalNumberRules;
+      htmlRules: FinalNumberRules;
+      finalRules: FinalNumberRules;
+    };
+
+export type ValidationError = {
+  fieldName: string;
+  message: string;
+};

@@ -45,26 +45,26 @@ describe("FormValidator", () => {
 
     it("должен добавить текстовое поле", () => {
       expect(() => {
-        validator.addField("username", "text");
+        validator.addField({ fieldName: "username", type: "text" });
       }).not.toThrow();
     });
 
     it("должен добавить числовое поле", () => {
       expect(() => {
-        validator.addField("age", "number");
+        validator.addField({ fieldName: "age", type: "number" });
       }).not.toThrow();
     });
 
     it("должен поддерживать цепочку вызовов addField", () => {
       const result = validator
-        .addField("username", "text")
-        .addField("age", "number");
+        .addField({ fieldName: "username", type: "text" })
+        .addField({ fieldName: "age", type: "number" });
       expect(result).toBe(validator);
     });
 
     it("должен выбросить ошибку при несуществующем поле", () => {
       expect(() => {
-        validator.addField("nonexistent", "text");
+        validator.addField({ fieldName: "nonexistent", type: "text" });
       }).toThrow("Input not found: input-nonexistent");
     });
   });
@@ -87,7 +87,11 @@ describe("FormValidator", () => {
 
     describe("required", () => {
       it("должен вернуть false для пустого обязательного поля", () => {
-        validator.addField("username", "text", { required: true });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { required: true },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -98,7 +102,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для заполненного обязательного поля", () => {
-        validator.addField("username", "text", { required: true });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { required: true },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -111,7 +119,11 @@ describe("FormValidator", () => {
 
     describe("minLength", () => {
       it("должен вернуть false для слишком короткого значения", () => {
-        validator.addField("username", "text", { minLength: 5 });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { minLength: 5 },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -122,7 +134,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для значения достаточной длины", () => {
-        validator.addField("username", "text", { minLength: 5 });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { minLength: 5 },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -135,7 +151,11 @@ describe("FormValidator", () => {
 
     describe("maxLength", () => {
       it("должен вернуть false для слишком длинного значения", () => {
-        validator.addField("username", "text", { maxLength: 5 });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { maxLength: 5 },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -146,7 +166,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для значения допустимой длины", () => {
-        validator.addField("username", "text", { maxLength: 5 });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { maxLength: 5 },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -159,7 +183,11 @@ describe("FormValidator", () => {
 
     describe("pattern", () => {
       it("должен вернуть false для значения не соответствующего паттерну", () => {
-        validator.addField("username", "text", { pattern: /^[a-z]+$/ });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { pattern: /^[a-z]+$/ },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -170,7 +198,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для значения соответствующего паттерну", () => {
-        validator.addField("username", "text", { pattern: /^[a-z]+$/ });
+        validator.addField({
+          fieldName: "username",
+          type: "text",
+          rules: { pattern: /^[a-z]+$/ },
+        });
         const input = document.getElementById(
           "input-username"
         ) as HTMLInputElement;
@@ -200,7 +232,11 @@ describe("FormValidator", () => {
 
     describe("required", () => {
       it("должен вернуть false для пустого обязательного поля", () => {
-        validator.addField("age", "number", { required: true });
+        validator.addField({
+          fieldName: "age",
+          type: "number",
+          rules: { required: true },
+        });
         const input = document.getElementById("input-age") as HTMLInputElement;
         input.value = "";
 
@@ -211,7 +247,11 @@ describe("FormValidator", () => {
 
     describe("min", () => {
       it("должен вернуть false для значения меньше минимума", () => {
-        validator.addField("age", "number", { min: 18 });
+        validator.addField({
+          fieldName: "age",
+          type: "number",
+          rules: { min: 18 },
+        });
         const input = document.getElementById("input-age") as HTMLInputElement;
         input.value = "15";
 
@@ -220,7 +260,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для значения больше или равного минимуму", () => {
-        validator.addField("age", "number", { min: 18 });
+        validator.addField({
+          fieldName: "age",
+          type: "number",
+          rules: { min: 18 },
+        });
         const input = document.getElementById("input-age") as HTMLInputElement;
         input.value = "18";
 
@@ -231,7 +275,11 @@ describe("FormValidator", () => {
 
     describe("max", () => {
       it("должен вернуть false для значения больше максимума", () => {
-        validator.addField("age", "number", { max: 100 });
+        validator.addField({
+          fieldName: "age",
+          type: "number",
+          rules: { max: 100 },
+        });
         const input = document.getElementById("input-age") as HTMLInputElement;
         input.value = "150";
 
@@ -240,7 +288,11 @@ describe("FormValidator", () => {
       });
 
       it("должен вернуть true для значения меньше или равного максимуму", () => {
-        validator.addField("age", "number", { max: 100 });
+        validator.addField({
+          fieldName: "age",
+          type: "number",
+          rules: { max: 100 },
+        });
         const input = document.getElementById("input-age") as HTMLInputElement;
         input.value = "100";
 
@@ -267,7 +319,11 @@ describe("FormValidator", () => {
     });
 
     it("должен отобразить ошибку в правильном элементе", () => {
-      validator.addField("username", "text", { required: true });
+      validator.addField({
+        fieldName: "username",
+        type: "text",
+        rules: { required: true },
+      });
       const input = document.getElementById(
         "input-username"
       ) as HTMLInputElement;
@@ -281,7 +337,11 @@ describe("FormValidator", () => {
     });
 
     it("должен очистить ошибки при повторной валидации", () => {
-      validator.addField("username", "text", { required: true });
+      validator.addField({
+        fieldName: "username",
+        type: "text",
+        rules: { required: true },
+      });
       const input = document.getElementById(
         "input-username"
       ) as HTMLInputElement;
@@ -298,9 +358,13 @@ describe("FormValidator", () => {
     });
 
     it("должен использовать кастомное сообщение через getMessage", () => {
-      validator.addField("username", "text", {
-        required: true,
-        getMessage: () => "Пожалуйста, введите имя пользователя",
+      validator.addField({
+        fieldName: "username",
+        type: "text",
+        rules: {
+          required: true,
+          getMessage: () => "Пожалуйста, введите имя пользователя",
+        },
       });
       const input = document.getElementById(
         "input-username"
@@ -342,12 +406,24 @@ describe("FormValidator", () => {
 
     it("должен валидировать форму с несколькими полями", () => {
       validator
-        .addField("username", "text", { required: true, minLength: 3 })
-        .addField("email", "email", {
-          required: true,
-          pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        .addField({
+          fieldName: "username",
+          type: "text",
+          rules: { required: true, minLength: 3 },
         })
-        .addField("age", "number", { required: true, min: 18, max: 100 });
+        .addField({
+          fieldName: "email",
+          type: "email",
+          rules: {
+            required: true,
+            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+          },
+        })
+        .addField({
+          fieldName: "age",
+          type: "number",
+          rules: { required: true, min: 18, max: 100 },
+        });
 
       const usernameInput = document.getElementById(
         "input-username"
@@ -367,9 +443,21 @@ describe("FormValidator", () => {
 
     it("должен вернуть true когда все поля валидны", () => {
       validator
-        .addField("username", "text", { required: true })
-        .addField("email", "email", { required: true })
-        .addField("age", "number", { required: true });
+        .addField({
+          fieldName: "username",
+          type: "text",
+          rules: { required: true },
+        })
+        .addField({
+          fieldName: "email",
+          type: "email",
+          rules: { required: true },
+        })
+        .addField({
+          fieldName: "age",
+          type: "number",
+          rules: { required: true },
+        });
 
       const usernameInput = document.getElementById(
         "input-username"
@@ -389,9 +477,17 @@ describe("FormValidator", () => {
 
     it("должен вернуть false когда есть ошибки", () => {
       validator
-        .addField("username", "text", { required: true, minLength: 5 })
-        .addField("email", "email", { required: true })
-        .addField("age", "number", { min: 18 });
+        .addField({
+          fieldName: "username",
+          type: "text",
+          rules: { required: true, minLength: 5 },
+        })
+        .addField({
+          fieldName: "email",
+          type: "email",
+          rules: { required: true },
+        })
+        .addField({ fieldName: "age", type: "number", rules: { min: 18 } });
 
       const usernameInput = document.getElementById(
         "input-username"
