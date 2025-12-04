@@ -6,19 +6,14 @@ if (!form) {
   throw new Error("#form does not exist");
 }
 
-const validator = new FormValidator(form);
-
-const ENGLISH_LETTERS_REGEXP = new RegExp("^[a-zA-Z]+$");
-
-validator.addField("username", "text", [
-  { minLength: 3, maxLength: 255, pattern: ENGLISH_LETTERS_REGEXP },
-]);
-
-validator.addField("age", "number", [{ min: 18, max: 65 }]);
-
-validator.addField("email", "email");
-
-validator.addField("password", "password", [{ minLength: 8 }]);
+const validator = new FormValidator(form)
+  .addField("username", "text", { required: true, minLength: 3 })
+  .addField("email", "email", {
+    required: true,
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  })
+  .addField("password", "password", { required: true, minLength: 8 })
+  .addField("age", "number", { required: true, min: 18, max: 100 });
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
