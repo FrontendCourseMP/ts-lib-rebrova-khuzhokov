@@ -1,3 +1,9 @@
+# Form validation library
+
+Team name: rebrova-khuzhokov
+Team members: NastyaRebrova (Реброва Анастасия Алексеевна), askerdev (Хужоков Аскер Жамболатович)
+Lib: FormValidator
+
 # FormValidator
 
 Библиотека для валидации HTML форм на TypeScript с поддержкой различных типов полей и гибкими правилами валидации.
