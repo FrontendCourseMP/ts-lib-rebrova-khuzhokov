@@ -2,7 +2,9 @@ export type TStringFieldTypes = "email" | "password" | "text";
 
 export type TNumberFieldTypes = "number";
 
-export type TFieldTypes = TStringFieldTypes | TNumberFieldTypes;
+export type TCheckboxFieldTypes = "checkbox";
+
+export type TFieldTypes = TStringFieldTypes | TNumberFieldTypes | TCheckboxFieldTypes;
 
 export type TStringRule = {
   pattern?: RegExp;
@@ -20,11 +22,18 @@ export type CommonRule = {
   getMessage?: () => string;
 };
 
+export type TCheckboxRule = {
+  required?: boolean;
+  checked?: boolean;
+};
+
 type FinalNumberRules = Partial<TNumberRule & CommonRule>;
 
 type FinalStringRules = Partial<TStringRule & CommonRule>;
 
-export type Rule = FinalNumberRules | FinalStringRules;
+type FinalCheckboxRules = Partial<TCheckboxRule & CommonRule>;
+
+export type Rule = FinalNumberRules | FinalStringRules | FinalCheckboxRules;
 
 export type AddFieldParams =
   | {
@@ -36,6 +45,11 @@ export type AddFieldParams =
       fieldName: string;
       type: TNumberFieldTypes;
       rules?: FinalNumberRules;
+    }
+  | {
+      fieldName: string;
+      type: TCheckboxFieldTypes;
+      rules?: FinalCheckboxRules;
     };
 
 export interface IFormValidator {
@@ -56,6 +70,13 @@ export type TFieldConfig =
       rules: FinalNumberRules;
       htmlRules: FinalNumberRules;
       finalRules: FinalNumberRules;
+    }
+  | {
+      fieldName: string;
+      type: TCheckboxFieldTypes;
+      rules: FinalCheckboxRules;
+      htmlRules: FinalCheckboxRules;
+      finalRules: FinalCheckboxRules;
     };
 
 export type ValidationError = {

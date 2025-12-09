@@ -139,6 +139,12 @@ export class FormValidator implements IFormValidator {
       }
     }
 
+    if (type === "checkbox") {
+      if (input.hasAttribute("data-checked")) {
+        rules.checked = input.getAttribute("data-checked") === "true";
+      }
+    }
+
     return rules as Rule;
   }
 
@@ -158,19 +164,32 @@ export class FormValidator implements IFormValidator {
       return null;
     }
 
-    const value = input.value.trim();
+    const value = config.type === "checkbox" ? input.checked : input.value.trim();
     const rules = config.finalRules;
 
-    if (rules.required && !value) {
-      return {
-        fieldName: config.fieldName,
-        message:
-          rules.getMessage?.() ||
-          this.#getDefaultErrorMessage("required", rules),
-      };
+    if (rules.required) {
+      if (config.type === "checkbox") {
+        if (!value) { 
+          return {
+            fieldName: config.fieldName,
+            message:
+              rules.getMessage?.() ||
+              this.#getDefaultErrorMessage("required", rules),
+          };
+        }
+      } else {
+        if (!value) {
+          return {
+            fieldName: config.fieldName,
+            message:
+              rules.getMessage?.() ||
+              this.#getDefaultErrorMessage("required", rules),
+          };
+        }
+      }
     }
 
-    if (!value) {
+    if (config.type !== "checkbox" && !value) {
       return null;
     }
 
@@ -193,7 +212,8 @@ export class FormValidator implements IFormValidator {
             rules.getMessage?.() || this.#getDefaultErrorMessage("max", rules),
         };
       }
-    } else {
+    } else if (config.type !== "checkbox") {
+      const strValue = value as string;
       const strRules = rules as {
         minLength?: number;
         maxLength?: number;
@@ -202,7 +222,7 @@ export class FormValidator implements IFormValidator {
 
       if (
         strRules.minLength !== undefined &&
-        value.length < strRules.minLength
+        strValue.length < strRules.minLength
       ) {
         return {
           fieldName: config.fieldName,
@@ -214,7 +234,7 @@ export class FormValidator implements IFormValidator {
 
       if (
         strRules.maxLength !== undefined &&
-        value.length > strRules.maxLength
+        strValue.length > strRules.maxLength
       ) {
         return {
           fieldName: config.fieldName,
@@ -224,12 +244,24 @@ export class FormValidator implements IFormValidator {
         };
       }
 
-      if (strRules.pattern && !strRules.pattern.test(value)) {
+      if (strRules.pattern && !strRules.pattern.test(strValue)) {
         return {
           fieldName: config.fieldName,
           message:
             rules.getMessage?.() ||
             this.#getDefaultErrorMessage("pattern", rules),
+        };
+      }
+    } else {
+      const checkboxValue = value as boolean;
+      const checkboxRules = rules as { checked?: boolean };
+      
+      if (checkboxRules.checked !== undefined && checkboxValue !== checkboxRules.checked) {
+        return {
+          fieldName: config.fieldName,
+          message:
+            rules.getMessage?.() ||
+            this.#getDefaultErrorMessage("checked", rules),
         };
       }
     }
@@ -268,6 +300,7 @@ export class FormValidator implements IFormValidator {
       pattern: "Неверный формат",
       min: `Минимальное значение: ${rulesAny.min}`,
       max: `Максимальное значение: ${rulesAny.max}`,
+      checked: `Необходимо отметить чекбокс`,
     };
 
     return messages[rule] || "Ошибка валидации";

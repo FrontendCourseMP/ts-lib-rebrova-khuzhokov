@@ -29,6 +29,11 @@ const validator = new FormValidator(form)
     fieldName: "age",
     type: "number",
     rules: { required: true, min: 18, max: 100 },
+  })
+  .addField({
+    fieldName: "terms",
+    type: "checkbox",
+    rules: { required: true },
   });
 
 form.addEventListener("submit", (e) => {
