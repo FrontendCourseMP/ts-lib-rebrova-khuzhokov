@@ -14,7 +14,7 @@ Lib: FormValidator
 - 🔗 Fluent API для удобного добавления полей
 - 📝 Автоматическое извлечение правил из HTML атрибутов
 - 🎨 Автоматическое отображение ошибок валидации
-- 🌐 Поддержка различных типов полей (text, email, password, number)
+- 🌐 Поддержка различных типов полей (text, email, password, number, checkbox)
 - ⚙️ Гибкая настройка правил валидации
 - 💬 Кастомные сообщения об ошибках
 
@@ -56,6 +56,14 @@ npm install
     <span id="error-age" style="display: none; color: red;"></span>
   </div>
 
+  <div>
+    <label>
+      <input type="checkbox" id="input-terms" />
+      Я согласен с условиями
+    </label>
+    <span id="error-terms" style="display: none; color: red;"></span>
+  </div>
+
   <button type="submit">Отправить</button>
 </form>
 ```
@@ -79,7 +87,8 @@ const validator = new FormValidator(form)
     pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   })
   .addField("password", "password", { required: true, minLength: 8 })
-  .addField("age", "number", { required: true, min: 18, max: 100 });
+  .addField("age", "number", { required: true, min: 18, max: 100 })
+  .addField("terms", "checkbox", { required: true });
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -212,7 +221,11 @@ validator.addField("age", "number", {
 ```typescript
 // HTML правила: required, minlength=3, maxlength=20, pattern
 // JS правила: minLength=5 (переопределяет HTML minlength)
-validator.addField("username", "text", { minLength: 5 });
+validator.addField({
+  fieldName: "username",
+  type: "text",
+  rules: { minLength: 5 },
+});
 // Итоговые правила: required, minLength=5, maxLength=20, pattern
 ```
 
@@ -230,10 +243,14 @@ validator.addField("username", "text", { minLength: 5 });
 Вы можете переопределить любое сообщение с помощью функции `getMessage`:
 
 ```typescript
-validator.addField("email", "email", {
-  required: true,
-  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  getMessage: () => "Пожалуйста, введите корректный email адрес",
+validator.addField({
+  fieldName: "email",
+  type: "email",
+  rules: {
+    required: true,
+    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    getMessage: () => "Пожалуйста, введите корректный email адрес",
+  },
 });
 ```
 
@@ -245,20 +262,32 @@ validator.addField("email", "email", {
 const form = document.querySelector("#registrationForm") as HTMLFormElement;
 
 const validator = new FormValidator(form)
-  .addField("username", "text", {
-    required: true,
-    minLength: 3,
-    getMessage: () => "Имя пользователя должно быть не менее 3 символов",
+  .addField({
+    fieldName: "username",
+    type: "text",
+    rules: {
+      required: true,
+      minLength: 3,
+      getMessage: () => "Имя пользователя должно быть не менее 3 символов",
+    },
   })
-  .addField("email", "email", {
-    required: true,
-    pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    getMessage: () => "Введите корректный email",
+  .addField({
+    fieldName: "email",
+    type: "email",
+    rules: {
+      required: true,
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      getMessage: () => "Введите корректный email",
+    },
   })
-  .addField("password", "password", {
-    required: true,
-    minLength: 8,
-    getMessage: () => "Пароль должен быть не менее 8 символов",
+  .addField({
+    fieldName: "password",
+    type: "password",
+    rules: {
+      required: true,
+      minLength: 8,
+      getMessage: () => "Пароль должен быть не менее 8 символов",
+    },
   });
 
 form.addEventListener("submit", (e) => {
@@ -275,14 +304,22 @@ form.addEventListener("submit", (e) => {
 const form = document.querySelector("#orderForm") as HTMLFormElement;
 
 const validator = new FormValidator(form)
-  .addField("quantity", "number", {
-    required: true,
-    min: 1,
-    max: 100,
+  .addField({
+    fieldName: "quantity",
+    type: "number",
+    rules: {
+      required: true,
+      min: 1,
+      max: 100,
+    },
   })
-  .addField("price", "number", {
-    required: true,
-    min: 0.01,
+  .addField({
+    fieldName: "price",
+    type: "number",
+    rules: {
+      required: true,
+      min: 0.01,
+    },
   });
 
 form.addEventListener("submit", (e) => {
