@@ -37,6 +37,13 @@ describe("FormValidator", () => {
             <input type="number" id="input-age" />
             <span id="error-age"></span>
           </div>
+          <div id="terms">
+            <label for="input-terms">
+              <input id="input-terms" name="terms" type="checkbox" required />
+              Я согласен с условиями
+            </label>
+            <span id="error-terms"></span>
+          </div>
         </form>
       `;
       const form = document.getElementById("test-form") as HTMLFormElement;
@@ -52,6 +59,12 @@ describe("FormValidator", () => {
     it("должен добавить числовое поле", () => {
       expect(() => {
         validator.addField({ fieldName: "age", type: "number" });
+      }).not.toThrow();
+    });
+
+    it("должен добавить checkbox поле", () => {
+      expect(() => {
+        validator.addField({ fieldName: "terms", type: "checkbox" });
       }).not.toThrow();
     });
 
@@ -302,6 +315,58 @@ describe("FormValidator", () => {
     });
   });
 
+  describe("validate - checkbox поля", () => {
+    let validator: FormValidator;
+
+    beforeEach(() => {
+      document.body.innerHTML = `
+        <form id="test-form">
+          <div id="terms">
+            <label for="input-terms">
+              <input id="input-terms" name="terms" type="checkbox" required />
+              Я согласен с условиями
+            </label>
+            <span id="error-terms"></span>
+          </div>
+        </form>
+      `;
+      const form = document.getElementById("test-form") as HTMLFormElement;
+      validator = new FormValidator(form);
+    });
+
+    describe("required", () => {
+      it("должен вернуть true для happy path", () => {
+        validator.addField({
+          fieldName: "terms",
+          type: "checkbox",
+          rules: { required: true },
+        });
+        const input = document.getElementById(
+          "input-terms"
+        ) as HTMLInputElement;
+        input.checked = true;
+
+        const isValid = validator.validate();
+        expect(isValid).toBe(true);
+      });
+
+      it("должен вернуть false для пустого обязательного поля", () => {
+        validator.addField({
+          fieldName: "terms",
+          type: "checkbox",
+          rules: { required: true },
+        });
+        const input = document.getElementById(
+          "input-terms"
+        ) as HTMLInputElement;
+        input.checked = false;
+
+        const isValid = validator.validate();
+        expect(isValid).toBe(false);
+      });
+    });
+  });
+
   describe("Отображение ошибок", () => {
     let validator: FormValidator;
 
@@ -398,6 +463,13 @@ describe("FormValidator", () => {
             <input type="number" id="input-age" />
             <span id="error-age"></span>
           </div>
+          <div id="terms">
+            <label for="input-terms">
+              <input id="input-terms" name="terms" type="checkbox" required />
+              Я согласен с условиями
+            </label>
+            <span id="error-terms"></span>
+          </div>
         </form>
       `;
       const form = document.getElementById("test-form") as HTMLFormElement;
@@ -423,39 +495,10 @@ describe("FormValidator", () => {
           fieldName: "age",
           type: "number",
           rules: { required: true, min: 18, max: 100 },
-        });
-
-      const usernameInput = document.getElementById(
-        "input-username"
-      ) as HTMLInputElement;
-      const emailInput = document.getElementById(
-        "input-email"
-      ) as HTMLInputElement;
-      const ageInput = document.getElementById("input-age") as HTMLInputElement;
-
-      usernameInput.value = "John";
-      emailInput.value = "john@example.com";
-      ageInput.value = "25";
-
-      const isValid = validator.validate();
-      expect(isValid).toBe(true);
-    });
-
-    it("должен вернуть true когда все поля валидны", () => {
-      validator
-        .addField({
-          fieldName: "username",
-          type: "text",
-          rules: { required: true },
         })
         .addField({
-          fieldName: "email",
-          type: "email",
-          rules: { required: true },
-        })
-        .addField({
-          fieldName: "age",
-          type: "number",
+          fieldName: "terms",
+          type: "checkbox",
           rules: { required: true },
         });
 
@@ -466,10 +509,14 @@ describe("FormValidator", () => {
         "input-email"
       ) as HTMLInputElement;
       const ageInput = document.getElementById("input-age") as HTMLInputElement;
+      const termsInput = document.getElementById(
+        "input-terms"
+      ) as HTMLInputElement;
 
       usernameInput.value = "John";
       emailInput.value = "john@example.com";
       ageInput.value = "25";
+      termsInput.checked = true;
 
       const isValid = validator.validate();
       expect(isValid).toBe(true);
@@ -487,7 +534,12 @@ describe("FormValidator", () => {
           type: "email",
           rules: { required: true },
         })
-        .addField({ fieldName: "age", type: "number", rules: { min: 18 } });
+        .addField({ fieldName: "age", type: "number", rules: { min: 18 } })
+        .addField({
+          fieldName: "terms",
+          type: "checkbox",
+          rules: { required: true },
+        });
 
       const usernameInput = document.getElementById(
         "input-username"
@@ -496,10 +548,14 @@ describe("FormValidator", () => {
         "input-email"
       ) as HTMLInputElement;
       const ageInput = document.getElementById("input-age") as HTMLInputElement;
+      const termsInput = document.getElementById(
+        "input-terms"
+      ) as HTMLInputElement;
 
       usernameInput.value = "Jo"; // слишком короткое
       emailInput.value = ""; // пустое
       ageInput.value = "15"; // меньше минимума
+      termsInput.checked = false;
 
       const isValid = validator.validate();
       expect(isValid).toBe(false);
@@ -507,10 +563,12 @@ describe("FormValidator", () => {
       const usernameError = document.getElementById("error-username");
       const emailError = document.getElementById("error-email");
       const ageError = document.getElementById("error-age");
+      const termsError = document.getElementById("error-terms");
 
       expect(usernameError?.textContent).toBe("Минимум 5 символов");
       expect(emailError?.textContent).toBe("Это поле обязательно");
       expect(ageError?.textContent).toBe("Минимальное значение: 18");
+      expect(termsError?.textContent).toBe("Это поле обязательно");
     });
   });
 });
