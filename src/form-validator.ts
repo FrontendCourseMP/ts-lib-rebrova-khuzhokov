@@ -37,6 +37,7 @@ export class FormValidator implements IFormValidator {
    */
   constructor(form: HTMLFormElement) {
     this.#form = form;
+    this.#form.setAttribute("novalidate", "true");
     this.#fields = new Map();
   }
 
@@ -164,12 +165,13 @@ export class FormValidator implements IFormValidator {
       return null;
     }
 
-    const value = config.type === "checkbox" ? input.checked : input.value.trim();
+    const value =
+      config.type === "checkbox" ? input.checked : input.value.trim();
     const rules = config.finalRules;
 
     if (rules.required) {
       if (config.type === "checkbox") {
-        if (!value) { 
+        if (!value) {
           return {
             fieldName: config.fieldName,
             message:
@@ -255,8 +257,11 @@ export class FormValidator implements IFormValidator {
     } else {
       const checkboxValue = value as boolean;
       const checkboxRules = rules as { checked?: boolean };
-      
-      if (checkboxRules.checked !== undefined && checkboxValue !== checkboxRules.checked) {
+
+      if (
+        checkboxRules.checked !== undefined &&
+        checkboxValue !== checkboxRules.checked
+      ) {
         return {
           fieldName: config.fieldName,
           message:

@@ -4,13 +4,83 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ts-val</title>
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
+        background: #f0f0f0;
+      }
+        
+      form {
+        max-width: 400px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+        
+      div {
+        margin-bottom: 15px;
+      }
+        
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+        
+      input {
+        width: 382px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+        
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+        
+      button:hover {
+        background: #0056b3;
+      }
+        
+      span {
+        color: red;
+        font-size: 14px;
+        display: none;
+      }
+        
+      #terms {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+        
+      #terms label {
+        font-weight: normal;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+        
+      #terms input {
+        width: auto;
+      }
+    </style>
   </head>
   <body>
     <main>
       <section>
-        <form id="form">
+        <form id="form" novalidate>
           <div id="username">
-            <label for="input-username">Name</label>
+            <label for="input-username">Имя</label>
             <input
               id="input-username"
               name="username"
@@ -23,19 +93,19 @@
           </div>
 
           <div id="age">
-            <label for="input-age">Age</label>
+            <label for="input-age">Возраст</label>
             <input id="input-age" name="age" type="number" max="65" min="18" />
             <span id="error-age"></span>
           </div>
 
           <div id="email">
-            <label for="input-email">Email</label>
+            <label for="input-email">Почта</label>
             <input id="input-email" name="email" type="email" />
             <span id="error-email"></span>
           </div>
 
           <div id="password">
-            <label for="input-password">Password</label>
+            <label for="input-password">Пароль</label>
             <input id="input-password" name="password" type="password" />
             <span id="error-password"></span>
           </div>
@@ -54,4 +124,7 @@
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
+  <style>
+    
+  </style>
 </html>
